@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-149HQ125BY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-149HQ125BY');
+</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magister Mechanicus: Caesar's Aqueduct</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        roman: {
+                            gold: '#D4AF37',
+                            red: '#800020',
+                            terracotta: '#C05A46',
+                            clay: '#E29B7A',
+                            dark: '#1C1615',
+                            stone: '#E8E5DF'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                        serif: ['Georgia', 'ui-serif', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght=400;700;900&family=Roboto:ital,wght=0,300;0,400;0,500;0,700;1,300;1,400;1,700&display=swap');
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #120E0D;
+            /* Author protection: Prevent copying text */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .roman-title {
+            font-family: 'Cinzel', serif;
+        }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1c1615; }
+        ::-webkit-scrollbar-thumb { background: #800020; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #d4af37; }
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-roman-stone min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-roman-gold selection:text-roman-dark">
+
+    <!-- BACKGROUND MUSIC -->
+    <audio id="bg-music" src="Marble_at_Daybreak.mp3" loop preload="auto"></audio>
+
+    <!-- HEADER -->
+    <header class="border-b-4 border-roman-gold bg-roman-dark p-4 shadow-xl sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <svg class="w-10 h-10 text-roman-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 21h18M5 21V10c0-3.87 3.13-7 7-7s7 3.13 7 7v11M9 21v-7a3 3 0 016 0v7M3 10h18M6 6h12" />
+                </svg>
+                <div>
+                    <h1 class="roman-title text-xl sm:text-2xl font-black tracking-wider text-roman-gold">MAGISTER MECHANICUS</h1>
+                    <p class="text-xs text-roman-clay tracking-widest uppercase">Imperial Aqueduct Builder · Rome</p>
+                </div>
+            </div>
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button onclick="toggleMusic()" id="btn-musica" class="px-3 py-1.5 bg-transparent hover:bg-zinc-800 transition-all text-gray-400 font-bold text-sm rounded border border-zinc-700 hidden sm:block">
+                    🎵 On
+                </button>
+                <button onclick="toggleCodex()" class="px-3 py-1.5 bg-roman-red hover:bg-roman-gold hover:text-roman-dark transition-all duration-300 text-roman-stone font-bold text-sm rounded border border-roman-gold">
+                    📖 Codex of Vitruvius
+                </button>
+                <button onclick="reiniciarAventura()" class="px-3 py-1.5 bg-transparent hover:bg-zinc-800 transition-all text-gray-400 font-bold text-sm rounded border border-zinc-700">
+                    Restart
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- RESOURCE PANEL -->
+    <section id="panel-recursos" class="bg-gradient-to-r from-roman-dark via-stone-900 to-roman-dark border-b border-roman-gold/20 py-3 px-4 hidden">
+        <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+            <!-- Prestige -->
+            <div class="bg-black/30 p-2 rounded border border-roman-gold/10">
+                <span class="text-xs text-roman-clay block uppercase tracking-wider font-bold">Prestige</span>
+                <div class="flex items-center justify-center mt-1">
+                    <span id="valor-prestigio" class="roman-title text-xl font-bold text-roman-gold">80%</span>
+                </div>
+                <div class="w-full bg-zinc-800 h-1.5 rounded-full mt-1 overflow-hidden">
+                    <div id="barra-prestigio" class="bg-roman-gold h-full transition-all duration-500" style="width: 80%"></div>
+                </div>
+            </div>
+            <!-- Stability -->
+            <div class="bg-black/30 p-2 rounded border border-roman-gold/10">
+                <span class="text-xs text-roman-clay block uppercase tracking-wider font-bold">Stability</span>
+                <div class="flex items-center justify-center mt-1">
+                    <span id="valor-estabilidad" class="roman-title text-xl font-bold text-teal-400">100%</span>
+                </div>
+                <div class="w-full bg-zinc-800 h-1.5 rounded-full mt-1 overflow-hidden">
+                    <div id="barra-estabilidad" class="bg-teal-500 h-full transition-all duration-500" style="width: 100%"></div>
+                </div>
+            </div>
+            <!-- Budget -->
+            <div class="bg-black/30 p-2 rounded border border-roman-gold/10">
+                <span class="text-xs text-roman-clay block uppercase tracking-wider font-bold">Sesterces (HS)</span>
+                <div class="flex items-center justify-center mt-1">
+                    <span id="valor-presupuesto" class="roman-title text-xl font-bold text-yellow-500">45,000</span>
+                </div>
+                <div class="w-full bg-zinc-800 h-1.5 rounded-full mt-1 overflow-hidden">
+                    <div id="barra-presupuesto" class="bg-yellow-500 h-full transition-all duration-500" style="width: 100%"></div>
+                </div>
+            </div>
+            <!-- Deadline -->
+            <div class="bg-black/30 p-2 rounded border border-roman-gold/10">
+                <span class="text-xs text-roman-clay block uppercase tracking-wider font-bold">Months Remaining</span>
+                <div class="flex items-center justify-center mt-1">
+                    <span id="valor-plazo" class="roman-title text-xl font-bold text-orange-400">18</span>
+                </div>
+                <div class="w-full bg-zinc-800 h-1.5 rounded-full mt-1 overflow-hidden">
+                    <div id="barra-plazo" class="bg-orange-500 h-full transition-all duration-500" style="width: 100%"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN SCREENS -->
+    <main class="flex-grow max-w-4xl w-full mx-auto p-4 flex flex-col justify-center my-6">
+        
+        <!-- START SCREEN -->
+        <div id="pantalla-inicio" class="bg-stone-900 border-2 border-roman-gold p-6 sm:p-10 rounded-lg shadow-2xl relative overflow-hidden fade-in">
+            <div class="absolute inset-0 bg-[radial-gradient(#C05A46_1px,transparent_1px)] [background-size:16px_16px] opacity-10"></div>
+            
+            <div class="relative z-10 text-center max-w-2xl mx-auto">
+                <span class="px-3 py-1 bg-roman-red text-roman-gold text-xs font-bold rounded-full border border-roman-gold tracking-widest uppercase">112 AD · Trajan</span>
+                
+                <h2 class="roman-title text-3xl sm:text-5xl font-extrabold text-roman-gold mt-4 mb-2">OPUS AQUAE</h2>
+                <p class="text-roman-clay font-serif italic text-lg sm:text-xl mb-6">"Water is the liquid testament of Rome's genius."</p>
+                
+                <div class="my-6 p-4 bg-black/40 border-l-4 border-roman-red rounded text-left text-sm text-zinc-300 leading-relaxed">
+                    <p>You have been appointed <em>Magister Mechanicus</em>. Your mission is to design and erect a monumental aqueduct. You will formulate Roman concrete, use suspended scaffolding, forge iron clamps, lay inverted siphons, and cross paths with destiny and Caesar himself... or suffer his wrath!</p>
+                </div>
+
+                <div class="my-6 p-4 bg-black/20 rounded border border-zinc-800 text-left">
+                    <span class="text-xs text-roman-clay uppercase tracking-wider block mb-3 font-bold text-center">Choose Your Starting Rank</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <button onclick="seleccionarDificultad('facil')" id="btn-dif-facil" class="p-3 border border-zinc-700 hover:border-green-500 rounded text-center transition-all bg-black/40">
+                            <span class="block font-bold text-green-400 roman-title text-sm">Patrician (Easy)</span>
+                            <span class="text-[11px] text-zinc-400">60,000 HS · 24 Months</span>
+                        </button>
+                        <button onclick="seleccionarDificultad('medio')" id="btn-dif-medio" class="p-3 border-2 border-roman-gold rounded text-center transition-all bg-roman-red/10">
+                            <span class="block font-bold text-roman-gold roman-title text-sm">Tribune (Normal)</span>
+                            <span class="text-[11px] text-zinc-400">45,000 HS · 18 Months</span>
+                        </button>
+                        <button onclick="seleccionarDificultad('dificil')" id="btn-dif-dificil" class="p-3 border border-zinc-700 hover:border-red-500 rounded text-center transition-all bg-black/40">
+                            <span class="block font-bold text-red-400 roman-title text-sm">Consul (Hard)</span>
+                            <span class="text-[11px] text-zinc-400">35,000 HS · 12 Months</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="comenzarJuego()" class="w-full sm:w-auto px-8 py-4 bg-roman-red hover:bg-roman-gold hover:text-roman-dark transition-all duration-300 rounded font-bold text-lg border-2 border-roman-gold shadow-lg">
+                    BEGIN CONSTRUCTION!
+                </button>
+            </div>
+        </div>
+
+        <!-- GAME SCREEN (LEVELS) -->
+        <div id="pantalla-juego" class="hidden bg-stone-900 border border-roman-gold/30 p-4 sm:p-8 rounded-lg shadow-2xl fade-in">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                <!-- Left Zone -->
+                <div class="lg:col-span-8 space-y-4">
+                    <div id="contenedor-visual" class="w-full h-48 bg-zinc-950/90 rounded border border-zinc-800 flex items-center justify-center p-2 relative shadow-inner">
+                        <div class="absolute top-2 left-2 px-2 py-0.5 bg-black/60 rounded text-[10px] text-roman-gold tracking-widest uppercase">Dynamic Blueprint</div>
+                        <div id="grafico-acueducto" class="w-full h-full flex items-center justify-center"></div>
+                    </div>
+
+                    <div class="bg-black/20 p-4 rounded border border-zinc-800">
+                        <span id="etiqueta-capitulo" class="text-roman-gold text-xs font-bold uppercase tracking-widest block mb-1">Level</span>
+                        <h3 id="titulo-paso" class="roman-title text-xl sm:text-2xl font-bold text-roman-stone">Loading...</h3>
+                        <div id="texto-narrativo" class="text-zinc-300 text-sm sm:text-base leading-relaxed mt-3 space-y-3"></div>
+                    </div>
+
+                    <div id="panel-curiosidad" class="hidden bg-roman-red/10 border-l-4 border-roman-gold p-4 rounded text-sm text-roman-stone fade-in">
+                        <strong class="text-roman-gold tracking-wide block mb-1">🏛️ HISTORICAL RECORD:</strong>
+                        <p id="texto-curiosidad" class="italic text-zinc-300"></p>
+                        <div class="mt-4 flex justify-end">
+                            <button id="btn-continuar" class="px-4 py-2 bg-roman-gold text-roman-dark font-bold rounded hover:bg-yellow-600">Continue &rarr;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Zone -->
+                <div class="lg:col-span-4 flex flex-col gap-4">
+                    <div id="area-opciones" class="space-y-3 p-4 bg-black/25 rounded-lg border border-zinc-800/80">
+                        <span class="text-roman-clay text-xs font-bold uppercase tracking-wider block">Magister's Orders:</span>
+                        <div id="contenedor-opciones" class="space-y-3 flex flex-col"></div>
+                    </div>
+
+                    <!-- THE LOGBOOK -->
+                    <div class="bg-black/30 p-3 rounded border border-zinc-800 text-xs">
+                        <span class="text-roman-gold font-bold uppercase block mb-1.5 tracking-wider border-b border-zinc-800/55 pb-1">📓 Logbook</span>
+                        <div id="lista-bitacora" class="space-y-1 max-h-32 overflow-y-auto pr-1 text-zinc-400">
+                            <p class="italic text-zinc-500 text-[10px]">No actions yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FINAL RESULT SCREEN -->
+        <div id="pantalla-final" class="hidden bg-stone-900 border-4 p-8 rounded-lg shadow-2xl text-center relative overflow-hidden fade-in">
+            <div class="relative z-10 max-w-2xl mx-auto space-y-6">
+                <div id="ilustracion-final" class="w-full h-40 bg-black/40 rounded border border-zinc-800 flex items-center justify-center p-2"></div>
+
+                <h2 id="titulo-final" class="roman-title text-2xl sm:text-4xl font-black text-roman-gold">RESULT</h2>
+                <p id="subtitulo-final" class="text-roman-clay italic text-base sm:text-lg px-2 text-center"></p>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 py-4 border-y border-zinc-800">
+                    <div><span class="text-xs text-roman-clay block uppercase">Prestige</span><span id="final-prestigio" class="text-lg font-bold text-roman-gold"></span></div>
+                    <div><span class="text-xs text-roman-clay block uppercase">Stability</span><span id="final-estabilidad" class="text-lg font-bold text-teal-400"></span></div>
+                    <div><span class="text-xs text-roman-clay block uppercase">Sesterces</span><span id="final-presupuesto" class="text-lg font-bold text-yellow-500"></span></div>
+                    <div><span class="text-xs text-roman-clay block uppercase">Months</span><span id="final-tiempo" class="text-lg font-bold text-orange-400"></span></div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mt-6">
+                    <button id="btn-clemencia" onclick="sobornarAlCesar()" class="hidden px-6 py-3 bg-gradient-to-r from-yellow-600 to-roman-gold text-roman-dark font-extrabold rounded border-2 border-yellow-300 shadow-lg hover:scale-105 transition-transform">
+                        🏛️ Beg Caesar for Mercy (15k HS)
+                    </button>
+                    <button onclick="reiniciarAventura()" class="px-6 py-3 bg-roman-red text-roman-stone font-bold rounded border border-roman-gold hover:bg-roman-gold hover:text-roman-dark transition-colors">
+                        New Aqueduct
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- IMPERIAL DECREE INBOX -->
+    <div id="modal-alerta" class="fixed inset-0 bg-black/85 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 fade-in">
+        <div class="bg-stone-900 border-2 border-roman-gold rounded-lg max-w-md w-full shadow-2xl flex flex-col p-6 text-center space-y-4">
+            <div class="text-roman-gold text-4xl">📜</div>
+            <h3 class="roman-title text-xl font-bold text-roman-gold border-b border-roman-gold/20 pb-2">Caesar's Decree</h3>
+            <p id="texto-alerta" class="text-zinc-300 text-sm leading-relaxed"></p>
+            <div class="pt-4">
+                <button onclick="cerrarAlerta()" class="px-6 py-2 bg-roman-red text-roman-gold font-bold border border-roman-gold rounded hover:bg-roman-gold hover:text-roman-dark transition-all duration-300">Obey Decree</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL WINDOW: THE CODEX OF VITRUVIUS -->
+    <div id="modal-codex" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4 z-50 fade-in">
+        <div class="bg-stone-900 border-2 border-roman-gold rounded-lg max-w-2xl w-full p-6 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div class="flex justify-between border-b border-zinc-700 pb-3 mb-3">
+                <h3 class="roman-title text-lg font-bold text-roman-gold">De Architecture - Liber VIII</h3>
+                <button onclick="toggleCodex()" class="text-white hover:text-roman-red font-bold">✕</button>
+            </div>
+            <ul class="text-sm text-zinc-300 space-y-4 list-disc pl-4 mb-6">
+                <li><strong>Pozzolana:</strong> Volcanic ash that allowed concrete to set underwater in rivers.</li>
+                <li><strong>Putlog holes:</strong> Intentional holes in walls to anchor suspended scaffolding without wasting timber.</li>
+                <li><strong>Treadwheel Crane:</strong> Giant wheel where workers walked to lift tons of granite.</li>
+                <li><strong>Opus Signinum:</strong> Waterproof mortar of lime and crushed ceramics, ideal for sealing water channels.</li>
+                <li><strong>Inverted Siphon:</strong> Hermetic lead pipes to cross valleys using hydraulic pressure.</li>
+            </ul>
+
+            <!-- TRHON INTEGRATION SECTION IN CODEX -->
+            <div class="border-t border-zinc-700 pt-4 mt-4 bg-black/30 p-3 rounded">
+                <p class="text-xs text-roman-gold font-bold uppercase mb-2 tracking-wider">🔗 Modern Engineering Connection:</p>
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-zinc-400">
+                    <span>To learn about the evolution of modern lifting technology, bridge cranes, and electric hoists, visit Vitruvius' descendants:</span>
+                    <a href="https://trhon.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 px-3 py-1.5 bg-roman-dark border border-roman-gold/40 hover:border-roman-gold hover:bg-roman-red/25 rounded transition-all duration-300">
+                        <img src="https://trhon.com/wp-content/uploads/2016/02/TRHON-small-logo.png" alt="Trhon Cranes Logo" class="h-6 object-contain" onerror="this.src=''; this.alt='TRHON';">
+                        <span class="roman-title text-xs font-bold text-roman-gold tracking-widest">-</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-zinc-800 bg-roman-dark/90 py-4 px-4 text-center text-xs text-zinc-500">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p>© 2026 IMPERIUM ROMANUM · Interactive historical fiction · Signature: CGraña</p>
+            <div class="flex items-center gap-3">
+                <span class="text-zinc-400">Recommended lifting technology:</span>
+                <a href="https://trhon.com" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 hover:opacity-85 transition-opacity bg-black/40 px-2 py-1 rounded border border-zinc-800">
+                    <img src="https://trhon.com/wp-content/uploads/2016/02/TRHON-small-logo.png" alt="Trhon" class="h-5 object-contain" onerror="this.style.display='none'">
+                    <span class="roman-title text-xs font-bold text-roman-gold tracking-wider">-</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // Security locks
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.ctrlKey && ['c','u','s','x','i','j'].includes(e.key.toLowerCase())) e.preventDefault();
+            if (e.key === 'F12') e.preventDefault();
+        });
+
+        // Shielded Audio Engine
+        let audioCtx;
+        function initAudio() {
+            try {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                if (AudioContextClass && !audioCtx) audioCtx = new AudioContextClass();
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            } catch (e) { console.log("Audio disabled."); }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
+                
+                if (type === 'click') {
+                    osc.type = 'sine'; osc.frequency.setValueAtTime(400, now);
+                    osc.frequency.exponentialRampToValueAtTime(600, now + 0.1);
+                    gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now+0.1);
+                    osc.start(now); osc.stop(now + 0.1);
+                } else if (type === 'success') {
+                    osc.type = 'triangle'; osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(659, now+0.1); gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.linearRampToValueAtTime(0, now+0.5);
+                    osc.start(now); osc.stop(now + 0.5);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now);
+                    osc.frequency.exponentialRampToValueAtTime(50, now+0.4);
+                    gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0, now+0.4);
+                    osc.start(now); osc.stop(now + 0.4);
+                }
+            } catch (e) {}
+        }
+
+        function toggleMusic() {
+            const music = document.getElementById('bg-music');
+            const btn = document.getElementById('btn-musica');
+            if(!music) return;
+            
+            if (music.paused) {
+                music.play().catch(e => console.log("Can't play yet", e));
+                btn.innerHTML = '🎵 On';
+                btn.classList.replace('text-zinc-500', 'text-gray-400');
+            } else {
+                music.pause();
+                btn.innerHTML = '🎵 Off';
+                btn.classList.replace('text-gray-400', 'text-zinc-500');
+            }
+        }
+
+        let estado = { prestigio: 80, estabilidad: 100, presupuesto: 45000, plazo: 18, nodoActual: 'inicio', bitacora: [] };
+
+        // HISTORY - 9 FULL LEVELS (Translated to English)
+        const historia = {
+            inicio: {
+                id: 1, capitulo: "Level I", titulo: "The Quarry of the Gods",
+                texto: "<p>Your first challenge consists of transporting tons of granite downhill. How do you organize the transport?</p>",
+                opciones: [
+                    { texto: "Use wooden sleds on greased tracks", recursos: { presupuesto: -6000, plazo: -2, estabilidad: 0, prestigio: 10 }, curiosidad: "Animal tallow grease drastically reduced friction on the wood.", siguiente: "cimentacion" },
+                    { texto: "Transport ashlar blocks in ox-drawn carts", recursos: { presupuesto: -10000, plazo: -4, estabilidad: 0, prestigio: -5 }, curiosidad: "The wheels sank into the mud due to excess weight.", siguiente: "cimentacion" },
+                    { texto: "Aligned log rollers without grease", recursos: { presupuesto: -4000, plazo: -3, estabilidad: -10, prestigio: -5 }, curiosidad: "Without grease, the wear caused uncontrolled sliding.", siguiente: "cimentacion" }
+                ]
+            },
+            cimentacion: {
+                id: 2, capitulo: "Level II", titulo: "Foundations Under the River",
+                texto: "<p>We need to pour stable foundations underwater. What is your mortar formula?</p>",
+                opciones: [
+                    { texto: "Aerial lime mortar and river sand", recursos: { presupuesto: -2000, plazo: -1, estabilidad: -35, prestigio: -15 }, curiosidad: "Common lime needs air to dry; underwater it dissolves.", siguiente: "andamiaje" },
+                    { texto: "Opus Caementicium with Pozzolana volcanic ash", recursos: { presupuesto: -5000, plazo: -2, estabilidad: 25, prestigio: 20 }, curiosidad: "Pozzolana generates silicates that set and harden underwater.", siguiente: "andamiaje" }
+                ]
+            },
+            andamiaje: {
+                id: 3, capitulo: "Level III", titulo: "Scaffolding and Contignationes",
+                texto: "<p>Erecting scaffolding from the ground is very expensive. How do you solve this?</p>",
+                opciones: [
+                    { texto: "Use putlog holes and suspended projecting scaffolds", recursos: { presupuesto: -2000, plazo: -1, estabilidad: 10, prestigio: 20 }, curiosidad: "Inserting beams into holes in the pillar saved 80% of timber.", siguiente: "pilares" },
+                    { texto: "Build complete wooden scaffolds from the ground", recursos: { presupuesto: -6000, plazo: -3, estabilidad: 5, prestigio: 0 }, curiosidad: "Safe, but the timber expense emptied the coffers.", siguiente: "pilares" }
+                ]
+            },
+            pilares: {
+                id: 4, capitulo: "Level IV", titulo: "The Treadwheel Crane",
+                texto: "<p>The blocks weigh 3,000 kg. What machine do you use to set them?</p>",
+                opciones: [
+                    { texto: "Install the Calcatorium (Treadwheel crane)", recursos: { presupuesto: -4000, plazo: -1, estabilidad: 15, prestigio: 25 }, curiosidad: "Walking inside the drum multiplied the mechanical advantage by twenty.", siguiente: "grapas" },
+                    { texto: "Brute force of slaves pulling ropes", recursos: { presupuesto: -2000, plazo: -4, estabilidad: -10, prestigio: -10 }, curiosidad: "Pulling without mechanical advantage was slow, exhausting, and deadly.", siguiente: "grapas" }
+                ]
+            },
+            grapas: {
+                id: 5, capitulo: "Level V", titulo: "Leaded Clamps",
+                texto: "<p>How do you secure the critical stone joints against earthquakes?</p>",
+                opciones: [
+                    { texto: "Forge iron clamps sealed with molten lead", recursos: { presupuesto: -3000, plazo: -1, estabilidad: 25, prestigio: 15 }, curiosidad: "The lead dampened vibrations and prevented the iron from rusting.", siguiente: "segundo_nivel" },
+                    { texto: "Pour wet wooden wedges", recursos: { presupuesto: -1000, plazo: -2, estabilidad: -25, prestigio: -10 }, curiosidad: "As it dried, the wood shrank and the stones loosened.", siguiente: "segundo_nivel" }
+                ]
+            },
+            segundo_nivel: {
+                id: 6, capitulo: "Level VI", titulo: "The Second Arcade",
+                texto: "<p>At 20 meters high, ground cranes are useless. What do you do?</p>",
+                opciones: [
+                    { texto: "Raise light mobile cranes (bipedal Dichalcon) to the cornice", recursos: { presupuesto: -4000, plazo: -2, estabilidad: 15, prestigio: 20 }, curiosidad: "Being 'A' shaped, they were easy to raise and didn't overload the arch.", siguiente: "specus" },
+                    { texto: "Increase the tension ropes of the giant ground cranes", recursos: { presupuesto: -7000, plazo: -4, estabilidad: -30, prestigio: -15 }, curiosidad: "Such long ropes swayed in the wind, destroying the construction.", siguiente: "specus" }
+                ]
+            },
+            specus: {
+                id: 7, capitulo: "Level VII", titulo: "The Channel: Opus Signinum",
+                texto: "<p>We must seal the water channel so it doesn't leak. What material do you apply?</p>",
+                opciones: [
+                    { texto: "Apply Opus Signinum (Lime and crushed terracotta)", recursos: { presupuesto: -3000, plazo: -2, estabilidad: 25, prestigio: 20 }, curiosidad: "The ceramic provided unsurpassed hydraulicity and elasticity.", siguiente: "sifon" },
+                    { texto: "Line with thick lead sheets", recursos: { presupuesto: -12000, plazo: -3, estabilidad: 5, prestigio: -15 }, curiosidad: "Extremely expensive and caused poisoning (plumbism).", siguiente: "sifon" }
+                ]
+            },
+            sifon: {
+                id: 8, capitulo: "Level VIII", titulo: "The Inverted Siphon",
+                texto: "<p>There is a 60-meter ravine. How do you get the water across without arches?</p>",
+                opciones: [
+                    { texto: "Build a siphon with thick lead pipes", recursos: { presupuesto: -9000, plazo: -3, estabilidad: 20, prestigio: 15 }, curiosidad: "By communicating vessels, the downward pressure pushed the water up the opposite slope.", siguiente: "piscina" },
+                    { texto: "Terracotta pipes joined with bitumen", recursos: { presupuesto: -3000, plazo: -2, estabilidad: -35, prestigio: -20 }, curiosidad: "The immense water pressure at the bottom of the valley caused the clay to burst.", siguiente: "piscina" }
+                ]
+            },
+            piscina: {
+                id: 9, capitulo: "Level IX", titulo: "The Piscina Limaria",
+                texto: "<p>The water has arrived, but it brings mud and sand. How do you purify it?</p>",
+                opciones: [
+                    { texto: "Create a settling Piscina Limaria", recursos: { presupuesto: -4000, plazo: -2, estabilidad: 10, prestigio: 25 }, curiosidad: "The water lost speed and the sand fell to the bottom, coming out pure to the city.", siguiente: "victoria" },
+                    { texto: "Channel directly to the Castellum of the city", recursos: { presupuesto: 0, plazo: 0, estabilidad: -10, prestigio: -30 }, curiosidad: "The mud clogged the forum fountains, infuriating the plebs.", siguiente: "victoria" }
+                ]
+            }
+        };
+
+        // PUNISHMENTS - CORRECT ARRAY STRUCTURE
+        const castigosImperiales = {
+            estabilidad: [
+                { causa: "suegra_granito", title: "Imperial Collapse!", text: "Trajan condemns you and your mother-in-law to chip granite barefoot in Hispania forever." },
+                { causa: "mina_cerveza", title: "Damnatio ad Metalla!", text: "You will be condemned as a slave in a beer mine, suffering the eternal prohibition of tasting it." },
+                { causa: "lesbos_suegra", title: "Exile in Lesbos!", text: "Perpetual exile to the island of Lesbos with your mother-in-law and her friends. Unbearable!" }
+            ],
+            prestigio: [
+                { causa: "cloaca_cunado", title: "Loss of Honor!", text: "Banishment to the Cloaca Maxima with your brother-in-law, feeding only on the rats you catch." },
+                { causa: "barbacoa_coliseo", title: "Humiliation in the Colosseum!", text: "Loss of existimatio. Condemned to host a barbecue for 10,000 attendees at the Colosseum while you eat rats." },
+                { causa: "londinium_pubs", title: "Exile in Londinium!", text: "Exile to London where they will take you to the Pubs to see how the barbarians drink while you can't have a drop." }
+            ],
+            presupuesto: [
+                { causa: "esclavo_suegro", title: "Total Bankruptcy!", text: "Confiscation for provincial debts. You are stripped of your assets and sold as a personal slave to your own father-in-law." },
+                { causa: "esclavo_suegra_hum", title: "Sold to your Mother-in-Law!", text: "You will be sold as a slave to your mother-in-law so her friends can humiliate you every afternoon in her atrium." }
+            ],
+            plazo: [
+                { causa: "rodas_trirreme", title: "Time Expired!", text: "Life sentence at the oar of a trireme sailing endlessly around the island of Rhodes." },
+                { causa: "australia_amigos", title: "Deportation!", text: "Deportation to Australia with your best friends but with an absolute prohibition on consuming beer." },
+                { causa: "muerte_cerveza", title: "Death Sentence!", text: "You will be executed slowly by massive and forced ingestion of Roman beer in the public forum." }
+            ]
+        };
+
+        // --- CORE FUNCTIONS ---
+        function agregarBitacora(nivel, desc) {
+            estado.bitacora.push({ n: nivel, d: desc });
+            const list = document.getElementById('lista-bitacora');
+            if (list) {
+                list.innerHTML = estado.bitacora.map(i => `<p class="border-l-2 border-roman-gold pl-2 my-1"><strong class="text-roman-clay">${i.n}:</strong> ${i.d}</p>`).join('');
+                list.scrollTop = list.scrollHeight;
+            }
+        }
+
+        function seleccionarDificultad(dif) {
+            estado.dificultad = dif;
+            const vals = { facil: {p:60000, pl:24, pr:90}, medio: {p:45000, pl:18, pr:80}, dificil: {p:35000, pl:12, pr:70} };
+            estado.presupuesto = vals[dif].p; estado.plazo = vals[dif].pl; estado.prestigio = vals[dif].pr;
+            ['facil','medio','dificil'].forEach(k => {
+                let btn = document.getElementById('btn-dif-'+k);
+                if(btn) btn.className = k===dif ? "p-3 border-2 border-roman-gold rounded bg-roman-red/20 scale-[1.02]" : "p-3 border border-zinc-700 hover:border-roman-gold rounded bg-black/40";
+            });
+            playSound('click');
+        }
+
+        function generarVisualizacion(nvl, est) {
+            let color = est < 50 ? "#ef4444" : est < 80 ? "#facc15" : "#D4AF37";
+            let prog = (nvl / 9) * 160;
+            let s = `<svg class="w-full h-full" viewBox="0 0 200 80" stroke="currentColor">
+                <line x1="10" y1="70" x2="190" y2="70" stroke="#57534e" stroke-width="2"/>
+                ${nvl===9 && est>40 ? `<path d="M 10 25 Q 100 23 190 25" stroke="#38bdf8" stroke-width="2" stroke-dasharray="4 2"/>` : ''}
+                <g stroke="${color}" stroke-width="1.5" fill="none">`;
+            for (let i = 20; i <= prog + 20; i += 25) {
+                if (i <= 170) {
+                    s += `<line x1="${i}" y1="70" x2="${i}" y2="40"/><line x1="${i+15}" y1="70" x2="${i+15}" y2="40"/><path d="M ${i} 40 A 7.5 7.5 0 0 1 ${i+15} 40"/>`;
+                    if (nvl >= 6) s += `<line x1="${i+2}" y1="40" x2="${i+2}" y2="25"/><line x1="${i+13}" y1="40" x2="${i+13}" y2="25"/><path d="M ${i+2} 25 A 5.5 5.5 0 0 1 ${i+13} 25"/>`;
+                }
+            }
+            s += `</g>
+                ${nvl>=7 ? `<line x1="15" y1="22" x2="${prog+15}" y2="22" stroke="#C05A46" stroke-width="2"/>` : ''}
+                ${est<40 ? `<text x="100" y="50" fill="#ef4444" font-size="6" text-anchor="middle">⚠️ DANGER</text>` : ''}
+            </svg>`;
+            return s;
+        }
+
+        function obtenerCastigoSVG(causa) {
+            let s = `<svg class="w-full h-full max-h-40" viewBox="0 0 200 100" fill="none" stroke="currentColor" stroke-width="1.5">`;
+            if (causa.includes('suegra') || causa.includes('suegro')) {
+                s += `<rect x="80" y="30" width="40" height="50" fill="#800020" stroke="#D4AF37"/><circle cx="100" cy="80" r="10" stroke="#78716c"/><text x="100" y="20" fill="#facc15" font-size="8" font-weight="bold" text-anchor="middle" font-family="Cinzel">FAMILY PUNISHMENT</text>`;
+            } else if (causa.includes('cerveza') || causa.includes('pubs') || causa.includes('australia')) {
+                s += `<rect x="90" y="40" width="20" height="30" fill="#facc15"/><path d="M 90 40 L 110 40" stroke="#fff" stroke-width="4"/><circle cx="100" cy="55" r="15" stroke="#ef4444" stroke-width="3"/><line x1="88" y1="43" x2="112" y2="67" stroke="#ef4444" stroke-width="3"/><text x="100" y="20" fill="#ef4444" font-size="8" font-weight="bold" text-anchor="middle" font-family="Cinzel">NO BEER ALLOWED</text>`;
+            } else if (causa.includes('cloaca') || causa.includes('barbacoa')) {
+                s += `<ellipse cx="100" cy="60" rx="15" ry="8" fill="#57534e"/><line x1="115" y1="60" x2="130" y2="65" stroke="#000"/><text x="100" y="20" fill="#22c55e" font-size="8" font-weight="bold" text-anchor="middle" font-family="Cinzel">RAT DIET</text>`;
+            } else if (causa.includes('rodas')) {
+                s += `<path d="M 40 60 L 160 60 L 140 80 L 60 80 Z" fill="#800020"/><line x1="100" y1="60" x2="80" y2="90" stroke="#b58a55" stroke-width="3"/><text x="100" y="20" fill="#f97316" font-size="8" font-weight="bold" text-anchor="middle" font-family="Cinzel">THE ETERNAL OAR</text>`;
+            } else {
+                s += `<circle cx="100" cy="50" r="30" stroke="#22c55e" stroke-width="4"/><text x="100" y="52" fill="#D4AF37" font-size="10" font-weight="bold" text-anchor="middle" font-family="Cinzel">VICTORY</text>`;
+            }
+            s += `</svg>`;
+            return s;
+        }
+
+        function verificarDerrota() {
+            if (estado.estabilidad <= 0) return castigosImperiales.estabilidad[Math.floor(Math.random() * castigosImperiales.estabilidad.length)];
+            if (estado.prestigio <= 0) return castigosImperiales.prestigio[Math.floor(Math.random() * castigosImperiales.prestigio.length)];
+            if (estado.presupuesto <= 0) return castigosImperiales.presupuesto[Math.floor(Math.random() * castigosImperiales.presupuesto.length)];
+            if (estado.plazo <= 0) return castigosImperiales.plazo[Math.floor(Math.random() * castigosImperiales.plazo.length)];
+            return null;
+        }
+
+        function actualizarBarras() {
+            document.getElementById('valor-prestigio').textContent = estado.prestigio + '%';
+            document.getElementById('barra-prestigio').style.width = estado.prestigio + '%';
+            document.getElementById('valor-estabilidad').textContent = estado.estabilidad + '%';
+            document.getElementById('barra-estabilidad').style.width = estado.estabilidad + '%';
+            document.getElementById('valor-presupuesto').textContent = estado.presupuesto.toLocaleString();
+            document.getElementById('barra-presupuesto').style.width = Math.min(100, (estado.presupuesto / 45000) * 100) + '%';
+            document.getElementById('valor-plazo').textContent = estado.plazo;
+        }
+
+        function comenzarJuego() {
+            initAudio(); 
+            playSound('click');
+            
+            // Start the background music automatically on user interaction
+            const music = document.getElementById('bg-music');
+            if (music) {
+                music.volume = 0.4; // 40% volume for background
+                const playPromise = music.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        document.getElementById('btn-musica').classList.remove('hidden');
+                    }).catch(e => {
+                        console.log("Audio autoplay prevented by browser or missing file:", e);
+                        // Si el archivo no se encuentra en el entorno web (Error 3 = NETWORK_NO_SOURCE)
+                        if (music.networkState === 3) { 
+                            setTimeout(() => {
+                                mostrarAlertaImperial("🎵 <b>Aviso de los Dioses (y del navegador):</b><br><br>El visor web actual aísla los archivos y no puede localizar 'Marble_at_Daybreak.mp3'.<br><br>El código está perfecto. Para escuchar tu música, <b>descarga este juego como archivo .html</b> y ábrelo en tu computadora guardando el MP3 y el HTML juntos en la misma carpeta.");
+                            }, 1000);
+                        }
+                    });
+                }
+            }
+
+            document.getElementById('pantalla-inicio').classList.add('hidden');
+            document.getElementById('pantalla-juego').classList.remove('hidden');
+            document.getElementById('panel-recursos').classList.remove('hidden');
+            cargarNodo('inicio'); actualizarBarras();
+        }
+
+        function cargarNodo(id) {
+            const n = historia[id]; estado.nodoActual = id;
+            document.getElementById('panel-curiosidad').classList.add('hidden');
+            document.getElementById('area-opciones').classList.remove('hidden');
+            document.getElementById('etiqueta-capitulo').textContent = n.capitulo;
+            document.getElementById('titulo-paso').textContent = n.titulo;
+            document.getElementById('texto-narrativo').innerHTML = n.texto;
+            document.getElementById('grafico-acueducto').innerHTML = generarVisualizacion(n.id, estado.estabilidad);
+            
+            const cont = document.getElementById('contenedor-opciones');
+            cont.innerHTML = '';
+            n.opciones.forEach((op, i) => {
+                const b = document.createElement('button');
+                b.className = "w-full text-left p-3 bg-black/40 hover:bg-roman-red border border-zinc-800 rounded text-sm transition-all";
+                b.innerHTML = `<strong class="text-roman-gold mr-2">${i+1}.</strong>${op.texto}`;
+                b.onclick = () => procesarEleccion(op);
+                cont.appendChild(b);
+            });
+        }
+
+        function procesarEleccion(op) {
+            playSound('click');
+            agregarBitacora(historia[estado.nodoActual].capitulo, op.texto);
+            estado.prestigio = Math.min(100, Math.max(0, estado.prestigio + op.recursos.prestigio));
+            estado.estabilidad = Math.min(100, Math.max(0, estado.estabilidad + op.recursos.estabilidad));
+            estado.presupuesto = Math.max(0, estado.presupuesto + op.recursos.presupuesto);
+            estado.plazo = Math.max(0, estado.plazo + op.recursos.plazo);
+
+            document.getElementById('grafico-acueducto').innerHTML = generarVisualizacion(historia[estado.nodoActual].id, estado.estabilidad);
+            actualizarBarras();
+
+            const d = verificarDerrota();
+            if(d) {
+                setTimeout(() => { playSound('error'); mostrarPantallaFinal(d.title, d.text, false, d.causa); }, 800);
+                return;
+            }
+
+            if(op.recursos.estabilidad < 0 || op.recursos.prestigio < 0) playSound('error'); else playSound('success');
+
+            document.getElementById('area-opciones').classList.add('hidden');
+            document.getElementById('texto-curiosidad').textContent = op.curiosidad;
+            document.getElementById('panel-curiosidad').classList.remove('hidden');
+            
+            document.getElementById('btn-continuar').onclick = () => {
+                if(op.siguiente === 'victoria') {
+                    playSound('success'); playSound('water_flow');
+                    mostrarPantallaFinal("GLORIOUS OPUS AQUAE!", "The aqueduct of Segovia supplies water to the city. Eternal honor!", true, "victoria");
+                } else {
+                    playSound('click'); cargarNodo(op.siguiente);
+                }
+            };
+        }
+
+        function mostrarPantallaFinal(titulo, txt, win, causa) {
+            document.getElementById('pantalla-juego').classList.add('hidden');
+            document.getElementById('panel-recursos').classList.add('hidden');
+            document.getElementById('pantalla-final').classList.remove('hidden');
+            
+            document.getElementById('titulo-final').textContent = titulo;
+            document.getElementById('subtitulo-final').textContent = txt;
+            document.getElementById('ilustracion-final').innerHTML = obtenerCastigoSVG(causa);
+            
+            const bClem = document.getElementById('btn-clemencia');
+            bClem.classList.toggle('hidden', win);
+            if(!win) bClem.innerHTML = `🏛️ Beg Caesar for Mercy (15,000 HS)`;
+
+            document.getElementById('final-prestigio').textContent = estado.prestigio + '%';
+            document.getElementById('final-estabilidad').textContent = estado.estabilidad + '%';
+            document.getElementById('final-presupuesto').textContent = estado.presupuesto.toLocaleString();
+            document.getElementById('final-tiempo').textContent = estado.plazo;
+        }
+
+        function sobornarAlCesar() {
+            initAudio();
+            if (estado.presupuesto >= 15000) {
+                estado.presupuesto -= 15000;
+                estado.estabilidad = Math.max(estado.estabilidad, 60); estado.prestigio = Math.max(estado.prestigio, 50); estado.plazo = Math.max(estado.plazo, 4);
+                
+                document.getElementById('pantalla-final').classList.add('hidden');
+                document.getElementById('pantalla-juego').classList.remove('hidden');
+                document.getElementById('panel-recursos').classList.remove('hidden');
+                playSound('success');
+                mostrarAlertaImperial("Emperor Trajan has accepted your generous contribution of 15,000 HS! Your sentence is revoked.");
+                agregarBitacora(historia[estado.nodoActual].capitulo, "🏛️ Imperial Contribution paid (15,000 HS).");
+            } else {
+                estado.presupuesto = 3000; estado.prestigio = 10; estado.estabilidad = Math.max(estado.estabilidad, 50); estado.plazo = Math.max(estado.plazo, 4);
+                document.getElementById('pantalla-final').classList.add('hidden');
+                document.getElementById('pantalla-juego').classList.remove('hidden');
+                document.getElementById('panel-recursos').classList.remove('hidden');
+                playSound('success');
+                mostrarAlertaImperial("Your sesterces are not enough! Your mother-in-law bribes Caesar for you. In return, she confiscates your honor, demoting you, and forces you to clean her stables.");
+                agregarBitacora(historia[estado.nodoActual].capitulo, "👵 Bail paid by your mother-in-law in exchange for your honor.");
+            }
+            cargarNodo(estado.nodoActual); actualizarBarras();
+        }
+
+        function mostrarAlertaImperial(msg) { document.getElementById('texto-alerta').innerHTML = msg; document.getElementById('modal-alerta').classList.remove('hidden'); }
+        function cerrarAlerta() { playSound('click'); document.getElementById('modal-alerta').classList.add('hidden'); }
+        function toggleCodex() { document.getElementById('modal-codex').classList.toggle('hidden'); }
+        function reiniciarAventura() { location.reload(); }
+
+        window.onload = () => seleccionarDificultad('medio');
+    </script>
+</body>
+</html>
