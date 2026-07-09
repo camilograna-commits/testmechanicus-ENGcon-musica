@@ -66,9 +66,6 @@
 </head>
 <body class="text-roman-stone min-h-screen flex flex-col justify-between overflow-x-hidden selection:bg-roman-gold selection:text-roman-dark">
 
-    <!-- BACKGROUND MUSIC -->
-    <audio id="bg-music" src="Marble_at_Daybreak.mp3" loop preload="auto"></audio>
-
     <!-- HEADER -->
     <header class="border-b-4 border-roman-gold bg-roman-dark p-4 shadow-xl sticky top-0 z-50">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
@@ -82,9 +79,6 @@
                 </div>
             </div>
             <div class="flex flex-wrap gap-2 justify-center">
-                <button onclick="toggleMusic()" id="btn-musica" class="px-3 py-1.5 bg-transparent hover:bg-zinc-800 transition-all text-gray-400 font-bold text-sm rounded border border-zinc-700 hidden sm:block">
-                    🎵 On
-                </button>
                 <button onclick="toggleCodex()" class="px-3 py-1.5 bg-roman-red hover:bg-roman-gold hover:text-roman-dark transition-all duration-300 text-roman-stone font-bold text-sm rounded border border-roman-gold">
                     📖 Codex of Vitruvius
                 </button>
@@ -317,7 +311,7 @@
             if (e.key === 'F12') e.preventDefault();
         });
 
-        // Shielded Audio Engine
+        // Shielded Audio Engine (Solo Efectos Especiales - Beeps)
         let audioCtx;
         function initAudio() {
             try {
@@ -354,25 +348,9 @@
             } catch (e) {}
         }
 
-        function toggleMusic() {
-            const music = document.getElementById('bg-music');
-            const btn = document.getElementById('btn-musica');
-            if(!music) return;
-            
-            if (music.paused) {
-                music.play().catch(e => console.log("Can't play yet", e));
-                btn.innerHTML = '🎵 On';
-                btn.classList.replace('text-zinc-500', 'text-gray-400');
-            } else {
-                music.pause();
-                btn.innerHTML = '🎵 Off';
-                btn.classList.replace('text-gray-400', 'text-zinc-500');
-            }
-        }
-
         let estado = { prestigio: 80, estabilidad: 100, presupuesto: 45000, plazo: 18, nodoActual: 'inicio', bitacora: [] };
 
-        // HISTORY - 9 FULL LEVELS (Translated to English)
+        // HISTORY - 9 FULL LEVELS 
         const historia = {
             inicio: {
                 id: 1, capitulo: "Level I", titulo: "The Quarry of the Gods",
@@ -449,7 +427,7 @@
             }
         };
 
-        // PUNISHMENTS - CORRECT ARRAY STRUCTURE
+        // PUNISHMENTS
         const castigosImperiales = {
             estabilidad: [
                 { causa: "suegra_granito", title: "Imperial Collapse!", text: "Trajan condemns you and your mother-in-law to chip granite barefoot in Hispania forever." },
@@ -552,27 +530,6 @@
             initAudio(); 
             playSound('click');
             
-            // Start the background music automatically on user interaction
-            const music = document.getElementById('bg-music');
-            if (music) {
-                music.volume = 0.4; // 40% volume for background
-                const playPromise = music.play();
-                
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        document.getElementById('btn-musica').classList.remove('hidden');
-                    }).catch(e => {
-                        console.log("Audio autoplay prevented by browser or missing file:", e);
-                        // Si el archivo no se encuentra en el entorno web (Error 3 = NETWORK_NO_SOURCE)
-                        if (music.networkState === 3) { 
-                            setTimeout(() => {
-                                mostrarAlertaImperial("🎵 <b>Aviso de los Dioses (y del navegador):</b><br><br>El visor web actual aísla los archivos y no puede localizar 'Marble_at_Daybreak.mp3'.<br><br>El código está perfecto. Para escuchar tu música, <b>descarga este juego como archivo .html</b> y ábrelo en tu computadora guardando el MP3 y el HTML juntos en la misma carpeta.");
-                            }, 1000);
-                        }
-                    });
-                }
-            }
-
             document.getElementById('pantalla-inicio').classList.add('hidden');
             document.getElementById('pantalla-juego').classList.remove('hidden');
             document.getElementById('panel-recursos').classList.remove('hidden');
@@ -624,7 +581,7 @@
             
             document.getElementById('btn-continuar').onclick = () => {
                 if(op.siguiente === 'victoria') {
-                    playSound('success'); playSound('water_flow');
+                    playSound('success');
                     mostrarPantallaFinal("GLORIOUS OPUS AQUAE!", "The aqueduct of Segovia supplies water to the city. Eternal honor!", true, "victoria");
                 } else {
                     playSound('click'); cargarNodo(op.siguiente);
